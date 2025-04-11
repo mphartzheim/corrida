@@ -8,7 +8,8 @@ export default defineConfig({
   plugins: [
     vue(),
   ],
-  base: process.env.ELECTRON == "true" ? './' : '/',
+  // Always use relative paths in production, which is needed for Electron
+  base: process.env.NODE_ENV === 'production' || process.env.ELECTRON == "true" ? './' : '/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

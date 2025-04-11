@@ -1,0 +1,70 @@
+{
+  "name": "corrida",
+  "version": "1.0.0",
+  "description": "Formula 1 race information and calendar app",
+  "private": true,
+  "main": "electron.cjs",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "electron:dev": "cross-env NODE_ENV=development electron .",
+    "electron:build": "vite build && electron-builder",
+    "electron:build:win": "vite build && electron-builder --win",
+    "electron:build:linux": "vite build && electron-builder --linux",
+    "start": "concurrently \"npm run dev\" \"npm run electron:dev\""
+  },
+  "build": {
+    "appId": "com.corrida.app",
+    "productName": "Corrida",
+    "files": [
+      "dist/**/*",
+      "electron.cjs",
+      "preload.cjs",
+      "src/assets/tray_icon.*"
+    ],
+    "directories": {
+      "buildResources": "src/assets",
+      "output": "release"
+    },
+    "mac": {
+      "category": "public.app-category.sports",
+      "icon": "src/assets/tray_icon.png"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "src/assets/tray_icon.ico"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Sports",
+      "icon": "src/assets/tray_icon.png",
+      "maintainer": "joypunk <joypunk@example.com>"
+    }
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "axios": "^1.8.4",
+    "leaflet": "^1.9.4",
+    "vue": "^3.5.13",
+    "vuetify": "^3.8.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.3",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^35.1.5",
+    "electron-builder": "^26.0.12",
+    "vite": "^6.2.4",
+    "vite-plugin-vue-devtools": "^7.7.2"
+  },
+  "author": {
+    "name": "joypunk",
+    "email": "joypunk@example.com"
+  },
+  "homepage": "https://github.com/joypunk/corrida"
+}

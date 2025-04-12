@@ -20,16 +20,31 @@ export default {
 
     /**
      * Fetches data for the full season calendar
+     * @param {number} year - Optional year to fetch (defaults to current season)
      * @returns {Promise} Promise with full season race data
      */
-    async getFullCalendar() {
+    async getFullCalendar(year = 'current') {
         try {
-            const response = await axios.get('https://api.jolpi.ca/ergast/f1/current.json');
+            const response = await axios.get(`https://api.jolpi.ca/ergast/f1/${year}.json`);
             return response.data.MRData.RaceTable.Races;
         } catch (error) {
-            console.error('Error fetching full calendar data:', error);
+            console.error(`Error fetching ${year} calendar data:`, error);
             throw error;
         }
+    },
+
+    /**
+     * Gets the list of valid F1 seasons from 1950 to current year
+     * @param {boolean} descending - Whether to sort years in descending order (newest first)
+     * @returns {Array} Array of year numbers
+     */
+    getValidSeasons(descending = true) {
+        const currentYear = new Date().getFullYear();
+        const years = [];
+        for (let year = 1950; year <= currentYear; year++) {
+            years.push(year);
+        }
+        return descending ? years.reverse() : years;
     },
 
     /**

@@ -115,6 +115,8 @@
 </template>
 
 <script>
+    import { getConstructorColor } from '@/services/constructorUtils';
+
     export default {
         name: 'RaceResults',
         props: {
@@ -145,50 +147,71 @@
             },
 
             getDriverColor(driverId) {
-                // Static color mapping for 2025 drivers
+                // Find the driver's constructor in the results based on result type
+                const driverResult = this.findDriverResultById(driverId);
+
+                if (driverResult && driverResult.Constructor) {
+                    return getConstructorColor(driverResult.Constructor.constructorId);
+                }
+
+                // Fallback to static color mapping for specific drivers
+                return this.getLegacyDriverColor(driverId);
+            },
+
+            findDriverResultById(driverId) {
+                // Check which type of results we're displaying
+                if (this.type === 'race' && this.results.Results) {
+                    return this.results.Results.find(r => r.Driver && r.Driver.driverId === driverId);
+                } else if (this.type === 'qualifying' && this.results.QualifyingResults) {
+                    return this.results.QualifyingResults.find(r => r.Driver && r.Driver.driverId === driverId);
+                } else if (this.type === 'sprint' && this.results.SprintResults) {
+                    return this.results.SprintResults.find(r => r.Driver && r.Driver.driverId === driverId);
+                }
+                return null;
+            },
+
+            getLegacyDriverColor(driverId) {
+                // Fallback for when constructor data isn't available
                 const driverColors = {
-                    // Red Bull
-                    'max_verstappen': '#0600EF',
-                    'tsunoda': '#0600EF',
+                    // Current drivers (2025)
+                    'max_verstappen': '#0600EF',    // Red Bull
+                    'tsunoda': '#0600EF',           // Red Bull
+                    'leclerc': '#DC0000',           // Ferrari
+                    'hamilton': '#DC0000',          // Ferrari
+                    'russell': '#00D2BE',           // Mercedes
+                    'antonelli': '#00D2BE',         // Mercedes
+                    'norris': '#FF8700',            // McLaren
+                    'piastri': '#FF8700',           // McLaren
+                    'alonso': '#006F62',            // Aston Martin
+                    'stroll': '#006F62',            // Aston Martin
+                    'gasly': '#0090FF',             // Alpine
+                    'doohan': '#0090FF',            // Alpine
+                    'ocon': '#FFF500',              // Haas
+                    'bearman': '#FFF500',           // Haas
+                    'hadjar': '#2B4562',            // Racing Bulls
+                    'lawson': '#2B4562',            // Racing Bulls
+                    'hulkenberg': '#900000',        // Sauber
+                    'bortoleto': '#900000',         // Sauber
+                    'albon': '#0082FA',             // Williams
+                    'sainz': '#0082FA',             // Williams
 
-                    // Ferrari
-                    'leclerc': '#DC0000',
-                    'hamilton': '#DC0000',
-
-                    // Mercedes
-                    'russell': '#00D2BE',
-                    'antonelli': '#00D2BE',
-
-                    // McLaren
-                    'norris': '#FF8700',
-                    'piastri': '#FF8700',
-
-                    // Aston Martin
-                    'alonso': '#006F62',
-                    'stroll': '#006F62',
-
-                    // Alpine
-                    'gasly': '#0090FF',
-                    'doohan': '#0090FF',
-
-                    // Haas
-                    'ocon': '#FFF500',
-                    'bearman': '#FFF500',
-
-                    // Racing Bulls
-                    'hadjar': '#2B4562',
-                    'lawson': '#2B4562',
-
-                    // Sauber (transitioning to Audi)
-                    'hulkenberg': '#900000',
-                    'bortoleto': '#900000',
-
-                    // Williams
-                    'albon': '#0082FA',
-                    'sainz': '#0082FA'
+                    // Recent past drivers (2020-2024)
+                    'bottas': '#00D2BE',            // Mercedes (historical)
+                    'ricciardo': '#FF8700',         // McLaren/RB (use McLaren color)
+                    'vettel': '#DC0000',            // Ferrari (historical)
+                    'raikkonen': '#900000',         // Alfa Romeo (historical)
+                    'giovinazzi': '#900000',        // Alfa Romeo (historical)
+                    'perez': '#0600EF',             // Red Bull
+                    'magnussen': '#FFF500',         // Haas
+                    'schumacher': '#FFF500',        // Haas
+                    'zhou': '#900000',              // Alfa Romeo/Sauber
+                    'de_vries': '#2B4562',          // AlphaTauri
+                    'sargeant': '#0082FA',          // Williams
+                    'latifi': '#0082FA',            // Williams
+                    'mazepin': '#FFF500'            // Haas
                 };
 
-                return driverColors[driverId] || '#999999'; // Default color if driver not found
+                return driverColors[driverId] || '#999999'; // Default gray for unknown drivers
             },
 
             hasFastestLap(result) {

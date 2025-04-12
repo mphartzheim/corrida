@@ -41,6 +41,7 @@
   import RaceInfo from './components/race/RaceInfo.vue';
   import SessionSchedule from './components/race/SessionSchedule.vue';
   import CircuitInfo from './components/race/CircuitInfo.vue';
+  import { generateConstructorColorMap } from './services/constructorUtils';
 
   export default {
     name: 'App',
@@ -72,10 +73,20 @@
         if (window.electron) {
           window.electron.minimizeToTray();
         }
+      },
+      async initConstructorColors() {
+        try {
+          // Generate the complete color map
+          await generateConstructorColorMap();
+          console.log('Constructor color map initialized');
+        } catch (error) {
+          console.error('Error initializing constructor colors:', error);
+        }
       }
     },
     mounted() {
       this.fetchRaceData();
+      this.initConstructorColors();
     }
   }
 </script>
